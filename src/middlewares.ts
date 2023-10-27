@@ -1,4 +1,6 @@
 import { NextFunction, Request, Response } from "express";
+import { rateLimit } from "express-rate-limit";
+import { slowDown } from "express-slow-down";
 
 import ErrorResponse from "./interfaces/ErrorResponse";
 
@@ -34,3 +36,15 @@ export function validateSubmmission(req: Request, res: Response, next: NextFunct
     }
   }
 }
+
+export const rateLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  limit: 10, // Limit each IP to 10 requests per `window` (here, per 15 minutes).
+  legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+});
+
+export const frequencyLimiter = slowDown({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  delayAfter: 2, // Allow 2 requests per 15 minutes.
+  delayMs: (hits) => hits * 250, // Add 100 ms of delay
+});
