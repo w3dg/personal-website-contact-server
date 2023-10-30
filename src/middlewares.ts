@@ -48,3 +48,15 @@ export const frequencyLimiter = slowDown({
   delayAfter: 2, // Allow 2 requests per 15 minutes.
   delayMs: (hits) => hits * 250, // Add 100 ms of delay
 });
+
+export function verifyAPIKey(req: Request, res: Response, next: NextFunction) {
+  const api_key_header = req.get("X-API-KEY");
+
+  if (api_key_header !== process.env.API_KEY) {
+    res.status(401);
+    const unAuthorizedError = new Error("UnAuthorized");
+    next(unAuthorizedError);
+  } else {
+    next();
+  }
+}
