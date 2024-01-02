@@ -41,6 +41,7 @@ export const rateLimiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
   limit: 10, // Limit each IP to 10 requests per `window` (here, per 15 minutes).
   legacyHeaders: false, // Disable the `X-RateLimit-*` headers.
+  validate: { xForwardedForHeader: false }, // ignore forwarded requests, from vpn/proxy for example
 });
 
 export const frequencyLimiter = slowDown({
